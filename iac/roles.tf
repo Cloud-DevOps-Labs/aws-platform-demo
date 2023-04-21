@@ -1,48 +1,23 @@
-#
-# Admin Role
-# #####################################################################
+resource "aws_iam_role" "test_role" {
+  name = "test_role"
 
-resource "aws_iam_role" "AdminAccessRole" {
-  name = "role-admin"
-
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Action = "sts:AssumeRole"
         Effect = "Allow"
+        Sid    = ""
         Principal = {
-          AWS = "arn:aws:iam::${local.jump_account}:root"
+          Service = "ec2.amazonaws.com"
         }
       },
     ]
   })
 
-  managed_policy_arns = [data.aws_iam_policy.AdministratorAccess.arn]
-}
-
-#
-# Support Role
-# #####################################################################
-
-resource "aws_iam_role" "SupportAccessRole" {
-  name = "role-support"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${local.jump_account}:root"
-        }
-      },
-    ]
-  })
-
-  managed_policy_arns = [
-    data.aws_iam_policy.ReadOnlyAccess.arn,
-    data.aws_iam_policy.SupportUser.arn
-  ]
+  tags = {
+    tag-key = "tag-value"
+  }
 }
